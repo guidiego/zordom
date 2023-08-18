@@ -1,0 +1,14 @@
+{
+  "extends": [
+    "plugin:sonarjs/recommended",
+    "@lessonnine/usa-tech.js/node",
+    "@lessonnine/usa-tech.js/typescript"
+  ],
+  "plugins": ["sonarjs"],
+  "overrides": [
+    {
+      "files": ["**/*.spec.ts"],
+      "extends": "@lessonnine/usa-tech.js/jest"
+    }
+  ]
+}
