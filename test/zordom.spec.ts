@@ -105,7 +105,7 @@ describe('src/zordom', () => {
       const id = 'sampleId';
       const owner = 'guidi';
       const zordom = new Zordom(dynamo as unknown as DynamoDBClient, noteSchema, configWithRange);
-      const result = await zordom.find({ id , owner });
+      const result = await zordom.find({ aa: "1", id , owner });
 
       expect(dynamo.send).toHaveBeenCalledTimes(1);
       expect(dynamo.send).toHaveBeenCalledWith(fakeCmd('get'))

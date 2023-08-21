@@ -80,7 +80,7 @@ export class Zordom<T extends string, U extends string, S extends ZodSchema<any>
     return validatedData;
   }
 
-  async update(query: { [K in T]: any } & (U extends undefined ? {} : { [P in U]: any }), updateData: Partial<z.infer<S>>): Promise<z.infer<S>> {
+  async update(query: { [K in T]: AnyPrimitive } & (U extends undefined ? {} : { [P in U]: AnyPrimitive }), updateData: Partial<z.infer<S>>): Promise<z.infer<S>> {
     const queryKey = Object.keys(query)[0] as T;
     if (queryKey !== this.config.hash) {
       throw new InvalidKey(this.config.tableName, this.config.hash, query);
@@ -107,9 +107,9 @@ export class Zordom<T extends string, U extends string, S extends ZodSchema<any>
     const updateItemCommand = new UpdateItemCommand({
       ExpressionAttributeNames: expressionAttributeNames,
       ExpressionAttributeValues: expressionAttributeValues,
-      Key: {
-        [this.config.hash]: { S: query[queryKey] },
-      },
+      Key: marshall({
+        [this.config.hash]: query[queryKey],
+      }),
       ReturnValues: "ALL_NEW",
       TableName: this.config.tableName,
       UpdateExpression: updateExpression,

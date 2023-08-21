@@ -4,14 +4,15 @@
     "@lessonnine/usa-tech.js/typescript",
     "@lessonnine/usa-tech.js/node"
   ],
+  "rules": {
+    "no-undef": "off",
+    "import/extensions": ["error", "ignorePackages", { "ts": "never" }]
+  },
   "plugins": ["sonarjs"],
   "overrides": [
     {
       "files": ["**/*.spec.ts"],
-      "extends": "@lessonnine/usa-tech.js/jest"
-    },
-    {
-      "files": ["**/*.ts"],
+      "extends": "@lessonnine/usa-tech.js/jest",
       "rules": {
         "no-undef": "off",
         "import/extensions": ["error", "ignorePackages", { "ts": "never" }]
