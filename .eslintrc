@@ -1,14 +1,21 @@
 {
   "extends": [
     "plugin:sonarjs/recommended",
-    "@lessonnine/usa-tech.js/node",
-    "@lessonnine/usa-tech.js/typescript"
+    "@lessonnine/usa-tech.js/typescript",
+    "@lessonnine/usa-tech.js/node"
   ],
   "plugins": ["sonarjs"],
   "overrides": [
     {
       "files": ["**/*.spec.ts"],
       "extends": "@lessonnine/usa-tech.js/jest"
+    },
+    {
+      "files": ["**/*.ts"],
+      "rules": {
+        "no-undef": "off",
+        "import/extensions": ["error", "ignorePackages", { "ts": "never" }]
+      }
     }
   ]
 }

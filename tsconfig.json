@@ -15,8 +15,7 @@
       "preserveWatchOutput": true,
       "skipLibCheck": true,
       "strict": true,
-      "emitDeclarationOnly": true,
-      "allowImportingTsExtensions": true
+      "baseUrl": "."
     },
     "include": ["**/*.ts"],
     "exclude": ["node_modules"]

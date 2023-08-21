@@ -3,8 +3,8 @@ import { DeleteItemCommand, GetItemCommand, PutItemCommand, UpdateItemCommand } 
 import { z } from "zod";
 import { marshall } from "@aws-sdk/util-dynamodb";
 
-import { Zordom } from '../src/zordom.ts';
-import { InvalidKey, NotFoundItem } from "../src/errors/index.ts";
+import { Zordom } from '../src/zordom';
+import { InvalidKey, NotFoundItem } from "../src/errors";
 
 import type { AttributeValue, DynamoDBClient} from "@aws-sdk/client-dynamodb";
 
