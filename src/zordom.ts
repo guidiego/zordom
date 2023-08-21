@@ -1,15 +1,11 @@
 import { GetItemCommand, PutItemCommand, UpdateItemCommand, DeleteItemCommand } from "@aws-sdk/client-dynamodb";
 import { unmarshall, marshall } from "@aws-sdk/util-dynamodb";
 
-import type { DynamoDBClient} from "@aws-sdk/client-dynamodb";
+import { NotFoundItem, InvalidKey } from "./errors";
+
+import type { AttributeValue, DynamoDBClient} from "@aws-sdk/client-dynamodb";
 import type { z, ZodSchema } from "zod";
-import { NotFoundItem } from "./errors";
 
-type AnyPrimitive = string | number | boolean;
-
-type IntersectKeys<T, Keys extends (keyof T)[]> = {
-  [K in Keys[number]]: T[K];
-};
 
 export interface ZordomConfig<T extends string, U extends string> {
   hash: T;
@@ -36,11 +32,11 @@ export class Zordom<T extends string, U extends string, S extends ZodSchema<any>
   ): Promise<PA extends undefined ? z.infer<S> : IntersectKeys<z.infer<S>, PA>> {
     const queryKey = Object.keys(query)[0] as T;
     if (queryKey !== this.config.hash) {
-      throw new Error("Invalid key in query.");
+      throw new InvalidKey(this.config.tableName, this.config.hash, query);
     }
 
     if (this.config.range && !query[this.config.range]) {
-      throw new Error(`Missing range in query for key ${this.config.range}.`);
+      throw new InvalidKey(this.config.tableName, this.config.range, query);
     }
 
     let projectionExpression: string | undefined;
@@ -66,8 +62,9 @@ export class Zordom<T extends string, U extends string, S extends ZodSchema<any>
       throw new NotFoundItem(this.config.tableName, Key);
     }
 
-    const unmarshalledItem = unmarshall(item);
-    return this.schema.parse(unmarshalledItem);
+    return unmarshall(item) as (
+      PA extends undefined ? z.infer<S> : IntersectKeys<z.infer<S>, PA>
+    );
   }
 
   async save(data: z.infer<S>): Promise<z.infer<S>> {
@@ -86,17 +83,19 @@ export class Zordom<T extends string, U extends string, S extends ZodSchema<any>
   async update(query: { [K in T]: any } & (U extends undefined ? {} : { [P in U]: any }), updateData: Partial<z.infer<S>>): Promise<z.infer<S>> {
     const queryKey = Object.keys(query)[0] as T;
     if (queryKey !== this.config.hash) {
-      throw new Error("Invalid key in query.");
+      throw new InvalidKey(this.config.tableName, this.config.hash, query);
     }
 
-    const validatedUpdateData = this.schema.parse(updateData);
-    const marshalledUpdateData = marshall(validatedUpdateData);
+    // @TODO: Partial Validation
+    // const validatedUpdateData = this.schema.parse(updateData);
+    const marshalledUpdateData = marshall(updateData);
 
     const expressionAttributeNames: Record<string, string> = {};
-    const expressionAttributeValues: Record<string, any> = {};
+    const expressionAttributeValues: Record<string, AttributeValue> = {};
     let updateExpression = "SET ";
 
-    for (const key in marshalledUpdateData) {
+    const marshallKeys = Object.keys(marshalledUpdateData)
+    for (const key of marshallKeys) {
       expressionAttributeNames[`#${key}`] = key;
       expressionAttributeValues[`:${key}`] = marshalledUpdateData[key];
 

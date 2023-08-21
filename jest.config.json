@@ -1,10 +1,7 @@
 {
+  "testEnvironment": "node",
   "transform": {
-    "^.+\\.ts?$": [
-      "esbuild-jest",
-      {
-        "sourcemap": true
-      }
-    ]
-  }
+    "^.+\\.tsx?$": ["esbuild-jest", { "sourcemap": true }]
+  },
+  "coverageReporters": ["json", "lcov", "text", "html"]
 }

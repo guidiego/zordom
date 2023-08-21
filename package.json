@@ -4,12 +4,23 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --config jest.config.json --maxWorkers=25% --coverage",
+    "test:dev": "concurrently \"pnpm test -- --watch\" \"http-serve coverage\"",
+    "lint": "eslint ."
   },
   "keywords": [],
   "author": "guilherme.albino.francisco@gmail.com",
   "license": "MIT",
+  "babel": {
+    "presets": [
+      "@babel/preset-typescript"
+    ]
+  },
+  "engines": {
+    "node": ">=18 <19"
+  },
   "devDependencies": {
+    "@babel/preset-typescript": "^7.22.5",
     "@lessonnine/eslint-config-usa-tech.js": "^2.1.1",
     "@types/jest": "^29.5.3",
     "esbuild": "^0.19.2",
@@ -23,6 +34,8 @@
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.391.0",
     "@aws-sdk/util-dynamodb": "^3.391.0",
+    "concurrently": "^8.2.0",
+    "http-serve": "^1.0.1",
     "zod": "^3.22.1"
   }
 }
